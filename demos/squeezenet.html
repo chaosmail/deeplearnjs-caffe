@@ -1,0 +1,65 @@
+<script src="../dist/browser/deeplearn-caffe.js"></script>
+
+<img id="img"></img>
+<div id="result"></div>
+
+<script>
+  var error = false;
+  var dl = deeplearnCaffe.dl;
+  var img = document.getElementById('img');
+  var out = document.getElementById('result');
+
+  // The model is served entirely from Github
+  var GITHUB_CDN = 'https://rawgit.com/';
+
+  var prototxtUrl = GITHUB_CDN + 'DeepScale/SqueezeNet/master/SqueezeNet_v1.1/deploy.prototxt';
+  var caffemodelUrl = GITHUB_CDN + 'DeepScale/SqueezeNet/master/SqueezeNet_v1.1/squeezenet_v1.1.caffemodel';
+
+  // Initialize the CaffeModel
+  var model = new deeplearnCaffe.CaffeModel(caffemodelUrl, prototxtUrl);
+
+  var untilLayer = undefined;   // forward pass until this layer
+  var imageUrl = 'img/cat.jpg'; // use this image for classification
+
+  // In case you want to force CPU or GPU mode
+  // dl.ENV.setMath(new dl.NDArrayMath('cpu', false));
+  // dl.ENV.setMath(new dl.NDArrayMath('webgl', false));
+
+  // Load the image
+  img.onload = async () => {
+    out.innerText = 'Loading model...';
+
+    await model.load().catch(function(err) {
+      error = err;
+      out.innerText = 'Something went wrong when fetching and parsing the model from Github!';
+    });
+
+    if (error) {
+      console.log('Model could not be loaded. Aborting.')
+      return;
+    }
+
+    out.innerText = 'Predicting...';
+
+    var pixels = dl.Array3D.fromPixels(img);
+
+    // Make a forward pass through the CaffeModel
+    var result = await model.predict(pixels, untilLayer, function(name, layer, activation){
+      // We can access all activiations here.
+      // Keep in mind that calling .dataSync() will fetch the data from GPU memory
+      // during
+      // console.log(name, layer, activation.dataSync());
+    });
+
+    out.innerText = '';
+
+    var k = 5;
+    var topK = await deeplearnCaffe.util.getTopK(result, k);
+
+    for (let i = 0; i < k; i++) {
+      var idx = topK.indices[i];
+      out.innerText += `${topK.values[i].toFixed(5)}: ${deeplearnCaffe.IMAGENET_CLASSES[idx]}\n`;
+    };
+  };
+  img.src = imageUrl;
+</script>
