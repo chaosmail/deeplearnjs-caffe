@@ -16,6 +16,8 @@
     "url": "https://github.com/chaosmail/deeplearnjs-caffe.git"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.8.4",
+    "@types/node": "^9.3.0",
     "browserify": "^14.5.0",
     "clang-format": "^1.2.2",
     "del": "^3.0.0",
@@ -23,6 +25,13 @@
     "gulp-rename": "^1.2.2",
     "gulp-typescript": "^3.2.3",
     "http-server": "^0.10.0",
+    "jasmine-co": "^1.2.2",
+    "jasmine-core": "~2.6.4",
+    "karma": "^1.7.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.0.1",
+    "karma-jasmine": "~1.1.0",
+    "karma-typescript": "^3.0.8",
     "protobufjs": "~6.8.0",
     "run-sequence": "^2.2.0",
     "tinyify": "^2.4.0",
@@ -32,6 +41,8 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
+    "test": "karma start",
+    "test-travis": "karma start --browsers='Firefox,Chrome' --singleRun",
     "build": "gulp build",
     "serve": "http-server",
     "publish-npm": "npm install && gulp build && npm publish"
