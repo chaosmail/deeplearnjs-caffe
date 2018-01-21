@@ -16,7 +16,7 @@ describe('Squeezenet', () => {
   // force CPU computation
   ENV.setMath(new NDArrayMath('cpu', false));
 
-  const imageUrl = `${BASE_PATH}/squeezenet/cat.jpg`;
+  const imageUrl = `${BASE_PATH}/assets/cat.jpg`;
 
   const activationDir = `${BASE_PATH}/squeezenet/activations/`;
   const modelDir = `${BASE_PATH}/squeezenet/model/`;

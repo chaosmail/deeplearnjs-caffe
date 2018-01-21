@@ -3,10 +3,10 @@ module.exports = function(config) {
     frameworks: ["jasmine", "karma-typescript"],
     files: [
       { pattern: "src/**/*.ts" },
-      { pattern: "test/**/*.ts" },
-      { pattern: "test/**/*.jpg", watched: false, included: false },
-      { pattern: "test/**/model/**/*", watched: false, included: false },
-      { pattern: "test/**/activations/**/*", watched: false, included: false }
+      { pattern: "test/e2e/**/*.ts" },
+      { pattern: "test/e2e/assets/**/*", watched: false, included: false },
+      { pattern: "test/e2e/**/model/**/*", watched: false, included: false },
+      { pattern: "test/e2e/**/activations/**/*", watched: false, included: false }
     ],
     preprocessors: { "**/*.ts": ["karma-typescript"]},
     karmaTypescriptConfig: {
