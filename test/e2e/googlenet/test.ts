@@ -124,7 +124,7 @@ describe('GoogLeNet', () => {
   ];
 
   layers.forEach((layer) => {
-    it(layer, async () => {
+    xit(layer, async () => {
       // Load the image data
       const imageData = await util.loadImageData(imageUrl);
       const input = Array3D.fromPixels(imageData);
@@ -152,6 +152,8 @@ describe('GoogLeNet', () => {
 function getDljsOutputLayer(layer: string) {
   if (layer.indexOf('pool') !== -1 && layer.indexOf('proj') !== -1) {
     return layer;
+  } else if (layer == 'conv1/7x7_s2') {
+    return 'conv1/relu_7x7';
   } else if (
       layer.indexOf('conv') !== -1 || layer.indexOf('proj') !== -1 ||
       layer.indexOf('1x1') !== -1 || layer.indexOf('3x3') !== -1 ||
