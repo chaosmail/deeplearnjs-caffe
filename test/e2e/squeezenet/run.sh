@@ -20,7 +20,7 @@ CM="net.caffemodel"
 mkdir -p $WD
 mkdir -p $ACT
 
-# wget $PROTOTXT -O "$WD/$PT"
-# wget $CAFFEMODEL -O "$WD/$CM"
+wget $PROTOTXT -O "$WD/$PT"
+wget $CAFFEMODEL -O "$WD/$CM"
 
 pycaffe "inference.py"

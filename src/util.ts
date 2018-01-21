@@ -68,6 +68,21 @@ function snakeToCamel(obj: any): any {
   return obj;
 }
 
+export function loadImageData(
+    url: string, elem?: HTMLImageElement): Promise<HTMLImageElement> {
+  const img = elem || document.createElement('img') as HTMLImageElement;
+
+  return new Promise((resolve, reject) => {
+    img.onload = async () => {
+      resolve(img);
+    };
+    img.onerror = (err) => {
+      reject(err);
+    };
+    img.src = url;
+  });
+}
+
 export interface ITopK {
   indices: Int32Array;
   values: Float32Array;

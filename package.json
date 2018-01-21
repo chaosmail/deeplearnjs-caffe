@@ -41,8 +41,8 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "scripts": {
-    "test": "karma start",
-    "test-travis": "karma start --browsers='Firefox,Chrome' --singleRun",
+    "test-e2e": "sh test/e2e/run.sh",
+    "test-e2e-travis": "sh test/e2e/run.sh --browsers='Chrome'",
     "build": "gulp build",
     "serve": "http-server",
     "publish-npm": "npm install && gulp build && npm publish"
