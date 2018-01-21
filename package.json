@@ -42,7 +42,7 @@
   },
   "scripts": {
     "test-e2e": "sh test/e2e/run.sh",
-    "test-e2e-travis": "sh test/e2e/run.sh --browsers='Chrome'",
+    "test-e2e-travis": "sh test/e2e/run.sh --browsers='Chrome' --singleRun",
     "build": "gulp build",
     "serve": "http-server",
     "publish-npm": "npm install && gulp build && npm publish"

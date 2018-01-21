@@ -10,7 +10,7 @@ caffe.set_mode_cpu()
 net = caffe.Net("model/net.prototxt", "model/net.caffemodel", caffe.TEST)
 
 im = Image.open(image_path)
-im = im.resize((227, 227), Image.ANTIALIAS)
+im = im.resize((224, 224), Image.ANTIALIAS)
 
 # Read image data and transform colormode RGB to BGR
 data = np.array(im)[:,:,::-1].astype('float32')
@@ -30,7 +30,9 @@ out = net.forward_all(blobs=out_blobs, data=data)
 for b in out_blobs:
     # Reshape to deeplearn.js
     # arr = np.squeeze(out[b], axis=0).transpose(2, 1, 0)
-    arr = np.squeeze(out[b], axis=0).transpose(1, 2, 0)
+    arr = np.squeeze(out[b], axis=0)
+    if len(arr.shape) > 2:
+        arr = arr.transpose(1, 2, 0)
     filename = 'activations/%s' % b
     dirname = os.path.dirname(filename)
     if not os.path.exists(dirname):
