@@ -148,7 +148,8 @@ describe('GoogLeNet', () => {
     });
   });
 
-  fit('conv1/7x7_s2', async () => {
+  // sample test
+  it('conv1/7x7_s2', async () => {
     // Load the image data
     const imageData = await util.loadImageData(imageUrl);
     const input = Array3D.fromPixels(imageData);
