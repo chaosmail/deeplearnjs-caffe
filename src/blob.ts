@@ -11,7 +11,7 @@ function getDims(blob: caffe.IBlobProto): number[] {
   if (isNotNull(blob.shape)) {
     return blob.shape.dim as number[];
   } else {
-    return ['num', 'channels', 'width', 'height']
+    return ['num', 'channels', 'height', 'width']
         .filter(
             (p: string) =>
                 // tslint:disable-next-line:no-any
@@ -30,10 +30,26 @@ export function convBlobToNDArray(blob: caffe.IBlobProto): NDArray {
   const data = blob.data;
   const dims = getDims(blob);
 
-  if (dims.length === 3) {
+  // TODO this could be done much nicer
+  if (dims.length === 2) {
     // we need to swap the depth axis
-    // caffe: [d, x, y] => deeplearnjs: [x, y, d]
-    const dim = getDimsByIndex(dims, [1, 2, 0]);
+    // caffe: [y, x] => deeplearnjs: [x, y]
+    const dim = getDimsByIndex(dims, [1, 0]);
+    const width = dim[0];
+    const height = dim[1];
+    const arr = NDArray.zeros(dim, 'float32');
+
+    for (let x = 0; x < width; ++x) {
+      for (let y = 0; y < height; ++y) {
+        const ix = y * width + x;
+        arr.set(data[ix], x, y);
+      }
+    }
+    return arr;
+  } else if (dims.length === 3) {
+    // we need to swap the depth axis
+    // caffe: [d, y, x] => deeplearnjs: [x, y, d]
+    const dim = getDimsByIndex(dims, [2, 1, 0]);
     const width = dim[0];
     const height = dim[1];
     const depth = dim[2];
@@ -42,7 +58,7 @@ export function convBlobToNDArray(blob: caffe.IBlobProto): NDArray {
     for (let d = 0; d < depth; ++d) {
       for (let x = 0; x < width; ++x) {
         for (let y = 0; y < height; ++y) {
-          const ix = (d * width + x) * height + y;
+          const ix = (d * height + y) * width + x;
           arr.set(data[ix], x, y, d);
         }
       }
@@ -50,8 +66,8 @@ export function convBlobToNDArray(blob: caffe.IBlobProto): NDArray {
     return arr;
   } else if (dims.length === 4) {
     // we need to swap the filter and depth axis
-    // caffe: [f, d, x, y] => deeplearnjs: [x, y, d, f]
-    const dim = getDimsByIndex(dims, [2, 3, 1, 0]);
+    // caffe: [f, d, y, x] => deeplearnjs: [x, y, d, f]
+    const dim = getDimsByIndex(dims, [3, 2, 1, 0]);
     const width = dim[0];
     const height = dim[1];
     const depth = dim[2];
@@ -62,7 +78,7 @@ export function convBlobToNDArray(blob: caffe.IBlobProto): NDArray {
       for (let d = 0; d < depth; ++d) {
         for (let x = 0; x < width; ++x) {
           for (let y = 0; y < height; ++y) {
-            const ix = ((f * depth + d) * width + x) * height + y;
+            const ix = ((f * depth + d) * height + y) * width + x;
             arr.set(data[ix], x, y, d, f);
           }
         }

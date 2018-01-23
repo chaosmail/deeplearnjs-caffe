@@ -33,13 +33,12 @@ def load_img(url="cat.jpg", size=(224, 224)):
     im = im.resize(size, Image.ANTIALIAS)
     return np.array(im)[:,:,::-1].astype('float32')
 
-def preprocess_input(data, mean=[104, 117, 123], dims=[0,3,1,2]):
+def preprocess_input(data, mean=[104, 117, 123], dims=[0,3,2,1]):
     """Preprocess input image"""
     # Subtract training mean
     data = data - np.array(mean)
 
     # Reshape to Caffe input
-    # data = np.expand_dims(data, axis=0).transpose(0, 3, 2, 1)
     return np.expand_dims(data, axis=0).transpose(*dims)
 
 def predict(data, proto="model/net.prototxt", model="model/net.caffemodel", all_blobs=True):
@@ -50,9 +49,8 @@ def predict(data, proto="model/net.prototxt", model="model/net.caffemodel", all_
     out = net.forward_all(blobs=blobs, data=data)
     return net, out
 
-def reshape(blob, dims=[1,2,0]):
+def reshape(blob, dims=[2,1,0]):
     """Reshape a blob to deeplearn.js"""
-    # arr = np.squeeze(out[b], axis=0).transpose(2, 1, 0)
     arr = np.squeeze(blob, axis=0)
     if len(arr.shape) is 3:
         arr = arr.transpose(*dims)

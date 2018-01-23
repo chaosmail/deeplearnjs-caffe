@@ -29,4 +29,4 @@ wget $PROTOTXT -O "$WD/$PT"
 wget $CAFFEMODEL -O "$WD/$CM"
 
 pycaffe "common/inference.py" -- \
-  --image "$(pwd)/assets/cat.jpg" --proto "$WD/$PT" --model "$WD/$CM" --size 227 227 --mean 104 117 123
+  --image "$(pwd)/assets/cat_227x227.jpg" --proto "$WD/$PT" --model "$WD/$CM" --size 227 227 --mean 104 117 123

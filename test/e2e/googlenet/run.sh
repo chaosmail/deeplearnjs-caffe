@@ -30,5 +30,5 @@ wget $PROTOTXT -O "$WD/$PT"
 wget $CAFFEMODEL -O "$WD/$CM"
 
 pycaffe "common/inference.py" -- \
-  --image "$(pwd)/assets/cat.jpg" --proto "$WD/$PT" --model "$WD/$CM" \
+  --image "$(pwd)/assets/cat_224x224.jpg" --proto "$WD/$PT" --model "$WD/$CM" \
   --size 224 224 --mean 104 117 123
