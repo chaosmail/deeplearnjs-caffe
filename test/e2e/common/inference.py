@@ -7,6 +7,7 @@ import argparse
 
 
 def main():
+    """Run the inference and save every blob to disk"""
     args = parse_args()
     data = load_img(url=args.url, size=args.size)
     data = preprocess_input(data, mean=args.mean)
@@ -29,12 +30,14 @@ def parse_args():
 
 def load_img(url="cat.jpg", size=(224, 224)):
     """Read image data and transform colormode RGB to BGR"""
-    im = Image.open(url)
-    im = im.resize(size, Image.ANTIALIAS)
-    return np.array(im)[:,:,::-1].astype('float32')
+    img = Image.open(url)
+    img = img.resize(size, Image.ANTIALIAS)
+    return np.array(img)[:, :, ::-1].astype('float32')
 
-def preprocess_input(data, mean=[104, 117, 123], dims=[0,3,2,1]):
+def preprocess_input(data, mean=None, dims=None):
     """Preprocess input image"""
+    mean = mean or [104, 117, 123]
+    dims = dims or [0, 3, 2, 1]
     # Subtract training mean
     data = data - np.array(mean)
 
@@ -49,8 +52,9 @@ def predict(data, proto="model/net.prototxt", model="model/net.caffemodel", all_
     out = net.forward_all(blobs=blobs, data=data)
     return net, out
 
-def reshape(blob, dims=[2,1,0]):
+def reshape(blob, dims=None):
     """Reshape a blob to deeplearn.js"""
+    dims = dims or [2, 1, 0]
     arr = np.squeeze(blob, axis=0)
     if len(arr.shape) is 3:
         arr = arr.transpose(*dims)
@@ -65,9 +69,9 @@ def mkdir(filename):
 def write(filename, blob):
     """Dump blob to disk as flat binary array"""
     mkdir(filename)
-    f = open(filename, 'wb')
-    f.write(blob.tobytes())
-    f.close()
+    filehandle = open(filename, 'wb')
+    filehandle.write(blob.tobytes())
+    filehandle.close()
 
 def save_blobs(net, out):
     """Store all activations as flat binaries"""

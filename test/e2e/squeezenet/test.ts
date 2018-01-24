@@ -2,10 +2,11 @@ require('jasmine-co').install();
 // make these functions async: afterAll, afterEach, beforeAll, beforeEach, it,
 // and fit
 
-import {Array3D, ENV, NDArrayMath, test_util} from 'deeplearn';
+import {Array3D, ENV, NDArrayMath} from 'deeplearn';
 
 import {CaffeModel} from '../../../src';
 import * as util from '../../../src/util';
+import * as test_util from '../../../src/test_util';
 
 const BASE_PATH = 'base/test/e2e';
 

@@ -1,5 +1,18 @@
 #!/bin/bash
 
+for i in "$@"
+do
+case $i in
+    --fetch)
+    FETCH=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
 GITHUB_CDN="https://rawgit.com";
 
 PROTOTXT="$GITHUB_CDN/DeepScale/SqueezeNet/master/SqueezeNet_v1.1/deploy.prototxt"
@@ -25,8 +38,10 @@ CM="net.caffemodel"
 mkdir -p $WD
 mkdir -p $ACT
 
-wget $PROTOTXT -O "$WD/$PT"
-wget $CAFFEMODEL -O "$WD/$CM"
+if [ "$FETCH" = "YES" ]; then
+  wget $PROTOTXT -O "$WD/$PT"
+  wget $CAFFEMODEL -O "$WD/$CM"
+fi
 
 pycaffe "common/inference.py" -- \
   --image "$(pwd)/assets/cat_227x227.jpg" --proto "$WD/$PT" --model "$WD/$CM" \

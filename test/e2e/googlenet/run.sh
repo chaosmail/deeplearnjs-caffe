@@ -1,5 +1,18 @@
 #!/bin/bash
 
+for i in "$@"
+do
+case $i in
+    --fetch)
+    FETCH=YES
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+
 GITHUB_CDN="https://rawgit.com";
 BERKELEY_DL="http://dl.caffe.berkeleyvision.org"
 
@@ -26,8 +39,10 @@ mkdir -p $WD
 ACT="activations"
 mkdir -p $ACT
 
-wget $PROTOTXT -O "$WD/$PT"
-wget $CAFFEMODEL -O "$WD/$CM"
+if [ "$FETCH" = "YES" ]; then
+  wget $PROTOTXT -O "$WD/$PT"
+  wget $CAFFEMODEL -O "$WD/$CM"
+fi
 
 pycaffe "common/inference.py" -- \
   --image "$(pwd)/assets/cat_224x224.jpg" --proto "$WD/$PT" --model "$WD/$CM" \

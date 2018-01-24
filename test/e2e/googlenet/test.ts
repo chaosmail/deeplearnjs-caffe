@@ -2,10 +2,11 @@ require('jasmine-co').install();
 // make these functions async: afterAll, afterEach, beforeAll, beforeEach, it,
 // and fit
 
-import {Array3D, ENV, NDArrayMath, test_util} from 'deeplearn';
+import {Array3D, ENV, NDArrayMath} from 'deeplearn';
 
 import {CaffeModel} from '../../../src';
 import * as util from '../../../src/util';
+import * as test_util from '../../../src/test_util';
 
 const BASE_PATH = 'base/test/e2e';
 
@@ -149,7 +150,7 @@ describe('GoogLeNet', () => {
   });
 
   // sample test
-  it('conv1/7x7_s2', async () => {
+  xit('conv1/7x7_s2', async () => {
     // Load the image data
     const imageData = await util.loadImageData(imageUrl);
     const input = Array3D.fromPixels(imageData);
@@ -157,14 +158,9 @@ describe('GoogLeNet', () => {
     // Make a forward pass through model until the specified layer
     // TODO this could be done much faster, by hooking into the callback
     // function of model.predict()
-    const output =
-        await model.predict(input, 'conv1/relu_7x7', (name, layer, act) => {
-          console.log(name);
-          console.log(act.shape);
-        });
+    const output = await model.predict(input, 'conv1/relu_7x7');
     const actual = output.dataSync();
 
-    console.log(getDljsOutputLayer('conv1/7x7_s2'));
     // Load the results from caffe
     const buffer = await util.fetchArrayBuffer(activationDir + 'conv1/7x7_s2');
     const expected = new Float32Array(buffer);
