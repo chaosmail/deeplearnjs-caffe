@@ -180,6 +180,10 @@ export function performMathOp(
     case 'relu':
       return math.relu(input as NDArray);
 
+    case 'prelu':
+      const alpha = blobs[0].as1D() as Array1D;
+      return math.prelu(input as NDArray, alpha);
+
     case 'tanh':
       return math.tanh(input as NDArray);
 
@@ -187,7 +191,10 @@ export function performMathOp(
       return math.sigmoid(input as NDArray);
 
     case 'softmax':
-      return math.softmax(input as NDArray);
+      const softmaxParam = caffe.SoftmaxParameter.create(layer.softmaxParam);
+      const axis = softmaxParam.axis;
+
+      return math.softmax(input as NDArray, axis);
 
     case 'concat': {
       const inp = input as Array3D[];
