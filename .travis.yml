@@ -1,0 +1,36 @@
+sudo: required
+language: node_js
+dist: trusty
+
+node_js:
+  - '8.9.1'
+
+addons:
+  chrome: stable
+  firefox: stable
+
+services:
+  - docker
+
+before_install:
+  # We need a display for the browsers
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sleep 3
+
+  # Pull the official caffe docker image
+  - docker pull bvlc/caffe:cpu
+
+  # Create a caffe command that uses docker under the hood
+  - caffe () { docker run --rm -u $(id -u):$(id -g) -v $(pwd):$(pwd) -w $(pwd) bvlc/caffe:cpu caffe $@; }
+  - caffe --version
+
+  # Create a pycaffe command that uses docker under the hood
+  - pycaffe () { docker run --rm -u $(id -u):$(id -g) -v $(pwd):$(pwd) -w $(pwd) bvlc/caffe:cpu ipython $@; }
+
+install:
+  - npm install
+
+script:
+  - npm run build
+  - npm run test-e2e-travis

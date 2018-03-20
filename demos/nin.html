@@ -24,14 +24,25 @@
   var untilLayer = undefined;   // forward pass until this layer
   var imageUrl = 'img/cat.jpg'; // use this image for classification
 
-  // In case you want to force CPU or GPU mode
-  // dl.ENV.setMath(new dl.NDArrayMath('cpu', false));
-  // dl.ENV.setMath(new dl.NDArrayMath('webgl', false));
+  out.innerText = 'Open DevTools for debug info';
 
-  // Load the image
-  img.onload = async () => {
-    out.innerText = 'Loading model...';
+  // Run this block using async/await
+  (async function(){
 
+    // If dl isn't loaded, wait 1 second.
+    if (dl == null) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    // In case you want to force CPU or GPU mode
+    // dl.ENV.setMath(new dl.NDArrayMath('cpu', false));
+    // dl.ENV.setMath(new dl.NDArrayMath('webgl', false));
+
+    console.log('Loading image pixels..');
+    var imageData = await deeplearnCaffe.util.loadImageData(imageUrl, img);
+    var pixels = dl.Array3D.fromPixels(imageData);
+
+    console.log('Loading model structure and weights..');
     await model.load().catch(function(err) {
       error = err;
       out.innerText =
@@ -39,29 +50,12 @@
         'and place it into the path ' + caffemodelUrl + '!';
     });
 
-    // there is something fishy with some edge names in this model
-    // hence I fix them manually here
-    model.setEdges(model.edges.map(function(d){
-      var cleanEdgeId = function(edge) {
-        switch (edge) {
-          case 'conv4': return 'conv4-1024';
-          case 'cccp7': return 'cccp7-1024';
-          case 'cccp8': return 'cccp8-1024';
-          default: return edge;
-        }
-      };
-      return {src: cleanEdgeId(d.src), dst: cleanEdgeId(d.dst)};
-    }));
-
     if (error) {
       console.log('Model could not be loaded. Aborting.')
       return;
     }
 
-    out.innerText = 'Predicting...';
-
-    var pixels = dl.Array3D.fromPixels(img);
-
+    console.log('Predicting..');
     // Make a forward pass through the CaffeModel
     var result = await model.predict(pixels, untilLayer, function(name, layer, activation){
       // We can access all activiations here.
@@ -70,15 +64,17 @@
       // console.log(name, layer, activation.dataSync());
     });
 
-    out.innerText = '';
+    console.log('Computing top-k..');
 
     var k = 5;
     var topK = await deeplearnCaffe.util.getTopK(result, k);
 
+    console.log('Finished..');
+
+    out.innerText = '';
     for (let i = 0; i < k; i++) {
       var idx = topK.indices[i];
       out.innerText += `${topK.values[i].toFixed(5)}: ${deeplearnCaffe.IMAGENET_CLASSES[idx]}\n`;
     };
-  };
-  img.src = imageUrl;
+  })();
 </script>

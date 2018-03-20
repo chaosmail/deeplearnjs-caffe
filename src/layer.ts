@@ -72,9 +72,8 @@ export function performMathOp(
           caffe.InnerProductParameter.create(layer.innerProductParam);
       const weights = blobs[0] as Array3D;
       const x = (input as Array3D).as1D();
-      // const W = weights.as2D(innerProductParam.numOutput, x.shape[0]);
-      const W = weights.as2D(weights.shape[1], weights.shape[0]);
-      const y = math.matrixTimesVector(W, x);
+      const W = weights.as2D(weights.shape[0], weights.shape[1]);
+      const y = math.vectorTimesMatrix(x, W);
 
       if (innerProductParam.biasTerm !== false) {
         const b = blobs[1].as1D() as Array1D;
@@ -92,7 +91,7 @@ export function performMathOp(
       // TODO throw error if pad is number[] or padW and padH
       // are defined. pad number[] is not supported in dljs
       const pad = getNumericParam(convolutionParam.pad, 0);
-      const dimRoundingMode = 'round';
+      const dimRoundingMode = 'floor';
 
       // kernelSize is estimated from weights implicitly
       const weights = blobs[0] as Array4D;

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/chaosmail/deeplearnjs-caffe.svg?branch=feat%2Ftest)](https://travis-ci.org/chaosmail/deeplearnjs-caffe)
+
 # Deeplearn-Caffe
 
 Run pretrained Caffe models in the browser with GPU support via the wonderful [deeplearn.js][deeplearn] library. This package provides utility tools and a model loader for Caffe models to support the following tasks:

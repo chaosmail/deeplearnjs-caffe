@@ -81,11 +81,25 @@ export class CaffeModel implements Model {
   }
 
   /**
+   * Get the nodes of the model graph
+   */
+  getNodes(): Array<dag.INode<caffe.ILayerParameter>> {
+    return this.nodes;
+  }
+
+  /**
    * Set the edges of the model graph
    * @param edges array of edges
    */
   setEdges(edges: dag.IEdge[]) {
     this.edges = edges;
+  }
+
+  /**
+   * Get the edges of the model graph
+   */
+  getEdges(): dag.IEdge[] {
+    return this.edges;
   }
 
   /**
